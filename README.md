@@ -445,7 +445,7 @@ public class ex3_7 {
 
 ---
 
-# System.out.print의 종류
+## System.out.print의 종류
 
 ---
 
@@ -464,7 +464,7 @@ public class ex3_7 {
 
 ---
 
-# 타입 변환
+## 타입 변환
 
 특정 데이터 타입의 값을 다른 데이터 타입의 값으로 변환  
 
@@ -483,7 +483,7 @@ public class ex3_7 {
 
 ---
 
-# 자바의 키 입력: System.in VS Scanner
+## 자바의 키 입력: System.in VS Scanner
 
 ## System.in
 
@@ -502,7 +502,7 @@ public class ex3_7 {
 
 ---
 
-# 연산자
+## 연산자
 
 연산: 주어진 식을 계산하여 결과를 알아내는 과정  
 
