@@ -130,9 +130,33 @@
 
 
 ## 4월 3일 (5주차)
-scanner.nextint()로 정수 입력
-InputMismatchException : scanner.nextint로 정수 이외의 것을 입력 받았을 때 예외처리.
-Scanner.next() : 입력 스트림에 있는 정수 이외의 것을 버린다.
+반복문
+자바 반복문 - for 문, while 문, do-whlie 문
+for 문
+
+for 문을 이용하여 1부터 10까지 합 출력하기
+
+```java
+public class ex3_1 {
+    public static void main(String[] args) {
+        int i, sum = 0;
+
+        for (i=1; i<=10; i++){
+            sum += i;
+            System.out.print(i);
+
+            if (i <= 9)
+                System.out.print("+");
+            else {
+                System.out.print("=");
+                System.out.print(sum);
+            }
+        }
+    }
+}
+
+결과: 1+2+3+4+5+6+7+8+9+10=55
+```
 
 
 ## 3월 27일 (4주차)
