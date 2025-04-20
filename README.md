@@ -1,4 +1,117 @@
 # 이도영 202230123
+## 4월 18일 (8주차)
+# 클래스와 사물  
+# 정적 영향의 비교 2
+
+static에서는 이 사용이 불가능합니다.  
+정적이어도 사용할 수 없으므로, 이것은 거부할 수 없습니다.  
+
+## 최종 클래스와 메소드
+
+final Class - 더 이상 클래스 의심할 수 없습니다.
+
+```java
+final class FinalClass{
+  ....
+}
+class SubClass extends FinalClass{ // 컴파일 오류 발생
+  .....
+}
+
+최종 필드: 구원을 선언할 때 사용
+구원받은 필드는 휴가를 시작하기 전에 시작해야 합니다.
+구원 필드는 실행하는 동안 가치를 찾을 수 없습니다.
+
+상속(상속)
+의심스러운(상속)의 필요성
+
+클래스 사이의 선언문은 제외 - 클래스의 간결화
+클래스의 위치를 ​​구분하여 클래스를 관리합니다.
+클래스와 확장을 나누는 활동의 향상
+
+문법과 사물
+선포 선언:extends
+상위 클래스를 응답받는다는 의미는 클래스를 축소한다는 의미입니다.
+상위 클래스 -> 슈퍼 클래스(슈퍼 클래스)
+클래스 -> 서브 클래스(sub class)
+```java
+class Point{
+  int x, y;
+}
+class ColorPoint extends Point{ //Point를 상속받는 ColorPoint 클래스 선언
+
+}
+ColorPoint는 Point를 논의할 필요가 없습니다.
+클래스 관련 - Point와 ColorPoint 클래스
+
+(x,y)의 한 점을 표현하는 Point 클래스와 공유하는 사람을 받아 점에 색을 추가한 ColorPoint 클래스
+```java
+class Point {
+    private int x, y; // 한 점을 구성하는 x, y 좌표
+    public void set(int x, int y){
+        this.x = x; this.y = y;
+    }
+    public void showPoint(){ // 점의 좌표 출력
+        System.out.println("(" + x + "," + y + ")");
+    }
+}
+
+class ColorPoint extends Point{ //Point를 상속받은 ColorPoint 선언
+    private String color; // 점의 색
+    public void setColor(String color){
+        this.color = color;
+    }
+    public void showColorPoint(){ // 컬러 점의 좌표 출력
+        System.out.print(color);
+        showPoint(); // Point 클래스의 set() 호출
+    }
+}
+
+public class ex5_1{
+    public static void main(String[] args) {
+        Point p = new Point(); // Point 객체  생성
+        p.set(1,2); // Point 클래스의 set() 호출
+        p.showPoint();
+
+        ColorPoint cp = new ColorPoint(); // ColorPoint 객체 생성
+        cp.set(3,4); // Point 클래스의 set() 호출
+        cp.setColor("red"); // ColorPoint 클래스의 setColor() 호출
+        cp.showColorPoint(); // 컬러와 좌표 출력
+    }
+}
+```
+결과: (1,2)
+red(3,4)
+
+서브클래스의 모양
+
+슈퍼 클래스를 받는 것과 서브 클래스를 밝히는 것
+서브 클래스는 슈퍼 클래스 기초를 포함합니다.
+
+위세어의 특징
+
+클래스 폴리(다중 상속) 불허
+하나의 클래스가 유일하게 부모 클래스를 동시에 수신하는 것을 경쟁하는 것입니다.
+
+C++는 상속 가능
+C++는 질문으로 쿼리를 생성하는 것이 가능합니다(다이아몬드 쿼리)
+부모 클래스에 관계적 관계가 있는 경우, 독립적인 라이브러리가 생성될 수 있는 모호성(Ambiguity)문제: 두부모 클래스에 대한 이름의 논쟁(변수나 함수)이 있는 경우, 어떤 부모의 멤버를 호출해야 할 지 모호해짐짐
+
+현재는 인터페이스(interface)의 사용자에게 책임이 있습니다.
+다중 사용자 기능을 제공합니다
+
+모든 예외 클래스는 묵시적으로 Object클래스 클래스를 받음
+java.lang.Object는 클래스는 모든 클래스의 훌륭한 클래스입니다.
+
+슈퍼 클래스의 기초에 대한 서브 클래스의 접근
+
+슈퍼 클래스의 개인 자료: 서브 클래스에서 접근할 수 없음
+슈퍼 클래스의 마스터 기반: 서브 클래스가 동일한 클래스에 있을 때, 접근 가능
+슈퍼 클래스의 공공 기반: 서브 클래스는 언제든지 접근 가능
+슈퍼 클래스의 protected 기초:
+같은 보호 장치는 모든 클래스 접근 권한에 속합니다.
+가용성과 성공 여부 없이 서브 클래스에 접근 가능
+
 ## 4월 17일 (7주차)
 ## 생성자의 종류
 변수 int a - 100; 는 int가 타입이지만
