@@ -114,6 +114,84 @@ java.lang.Object는 클래스는 모든 클래스의 훌륭한 클래스입니�
 같은 보호 장치는 모든 클래스 접근 권한에 속합니다.
 가용성과 성공 여부 없이 서브 클래스에 접근 가능
 
+## super()를 활용한 ColorPoint 작성
+
+```java
+class Point{
+    private int x, y; //한 점을 구성하는 x, y 좌표
+    public Point(){
+        this.x = this.y = 0;
+    }
+    public Point(int x, int y){
+        this.x = x; this.y = y;
+    }
+    public void showPoint() {// 점의 좌표 출력
+        System.out.println("(" + x + "," + y + ")");
+    }
+}
+
+class ColorPoint extends Point{ // Point를 상속받은 ColorPoint 선언
+    private String color; // 점의 색
+    public ColorPoint(int x, int y, String color){
+        super(x, y); // Point의 생성자 Point(x, y) 호출
+        this.color = color;
+    }
+    public void showColorPoint() { // 컬러 점의 좌표 출력
+        System.out.print(color);
+        showPoint(); // Point 클래스의 showPoint() 호출
+    }
+}
+
+public class ex5_2 {
+    public static void main(String[] args) {
+        ColorPoint cp = new ColorPoint(5, 6, "blue");
+        cp.showColorPoint();
+    }
+}
+```
+업캐스팅(upcasting) 컨셉
+하위 계급의 분류는 상위 등급을 구분킬 수 있고, 상위 등급의 분류는 하위 등급을 분류킬수 있습니다
+군인이 밖에 있는 사람이나 커서를 도는 무방
+사람이나 모두가 연락을 받기 때문에
+
+업캐스팅(upcasting)이란?
+클래스의 배지를 멋진 클래스의 배지에 대입
+멋진 클래스로 군단을 지원해 줄 것입니다.
+
+```java
+class Person {
+    String name;
+    String id;
+
+    public Person(String name) {
+        this.name = name;
+    }
+}
+
+class Student extends Person {
+    String grade;
+    String department;
+
+    public Student(String name) {
+        super(name);
+    }
+}
+
+public class UpcastingEx {
+    public static void main(String[] args) {
+        Person p;
+        Student s = new Student("이재문");
+        p = s; // 업캐스팅
+
+        System.out.println(p.name); // 오류 없음
+
+        // 아래는 오류 발생: 업캐스팅된 참조 변수는 서브 클래스의 멤버에 직접 접근 불가
+        // p.grade = "A"; // 컴파일 오류
+        // p.department = "Com"; // 컴파일 오류
+    }
+}
+```
+
 ## 4월 17일 (7주차)
 ## 생성자의 종류
 변수 int a - 100; 는 int가 타입이지만
