@@ -1,9 +1,453 @@
 # 이도영 202230123
-## 4월 18일 (8주차)
-## 클래스와 사물  
-## 정적 영향의 비교 2
 
-static에서는 사용이 불가능합니다.  
+## 5월 8일 (10주차)
+
+### 상속
+추상 클래스
+
+추상 메소드(abstract method): abstract로 선언된 메소드, 메소드의 코드는 없고 원형만 선언
+
+```java
+abstract public String getNane(); //추상 메소드
+abstract public String fail() { retrun "Good Bye";} // 추상 메소드 아님. 컴파일 오류
+```
+
+### 추상 클래스(abstract class)
+
+  추상 메소드를 가지며, abstract로 선언된 클래스
+  추상 메소드 없이, abstract로 선언한 클래스
+
+```java
+// 추상 메소드를 가진 추상 클래스
+abstract class shape {
+  public Shape() {...}
+  public void edit() {...}
+
+  abstract public void draw(); //추상 메소드
+}
+
+// 추상 메소드 없는 추상 클래스
+abstract class JComponent{
+  String name;
+  public void load(String name){
+    this.name = name;
+  }
+}
+```
+추상 클래스의 인스턴스 생성 불가
+
+  추상 클래스는 온전한 클래스가 아니기 때문에 인스턴스를 생성할 수 없음
+
+```java
+JComponent p; // 오류 없음. 추상 클래스의 레퍼런스 선언
+p = new JComponent(); // 컴파일 오류. 추상 클래스의 인스턴스 생성 불가
+Shape obj = new Shape(); //컴파일 오류. 추상 클래스의 인스턴스 생성 불가
+```
+
+### 추상 클래스의 상속과 구현
+
+  추상 클래스 상속
+  추상 클래스를 상속받으면 추상 클래스가 됨
+  서브 클래스도 abstract로 선언 해야 함
+
+```java
+abstract class A { // 추상 클래스
+  abstract public int add(int x, int y); //추상 메소드
+}
+abstract class B extends A {  // 추상 클래스
+  public void show() {System.out.println("B");}
+}
+
+A a = new A(); // 컴파일 오류. 추상 클래스의 인스턴스 생성 불가
+B b = new B(); // 컴파일 오류. 추상 클래스의 인스턴스 생성 불가
+```
+
+### 추상 클래스 구현
+  서브 클래스에서 슈퍼 클래스의 추상 메소드 구현(오버라이딩)
+  추상 클래스를 구현한 서브 클래스는 추상 클래스 아님
+
+```java
+class C extends A { // 추상 클래스 구현. C는 정상 클래스
+  public int add (int x, int y) {return x+y; } //추상 메소드 구현. 오버라이딩
+  public void show() {System.out.println("C"); }
+}
+
+C c = new C(); // 정상
+```
+
+### 추상 클래스의 목적
+
+추상 클래스의 목적
+상속을 위한 슈퍼 클래스로 활용하는 것
+서브 클래스에서 추상 메소드 구현
+다형성 실현
+
+### 추상 클래스의 구현
+
+```java
+abstract class Calculator {
+    public abstract int add(int a, int b); // 두 정수위 합을 구하여 리턴
+    public abstract int substract(int a, int b); // 두 정수의 차를 구하여 리턴
+    public abstract double average(int[] a); // 정수 배열의 평균 리턴
+}
+```
+```java
+public class ex5_5 extends Calculator {
+    @Override
+    public int add(int a, int b) { // 추상 메소드 구현
+        return a + b;
+    }
+    @Override
+    public int substract(int a, int b){ // 추상 메소드 구현
+        return a - b;
+    }
+    @Override
+    public double average(int[] a) { // 추상 메소드 구현
+        double sum = 0;
+        for(int i=0; i<a.length; i++)
+            sum += a[i];
+        return sum/a.length;
+    }
+    public static void main(String [] args) {
+        ex5_5 c = new ex5_5();
+        System.out.println(c.add(2,3));
+        System.out.println(c.substract(2,3));
+        System.out.println(c.average(new int [] {2,3,4}));
+    }
+}
+결과: 5
+-1 
+3.0
+```
+
+### 자바의 인터페이스
+
+  소프트웨어를 규격화된 모듈로 만들고, 인터페이스 맞는 모듈을 조립하듯이 응용프로그램을 작성 하기 위해서 사용
+
+
+  클래스가 구현해야 할 메소드들이 선언되는 추상형
+  인터페이스 선언: Interface 키워드로 선언.
+
+```java
+interface PhoneInterface { // 인터페이스 선언
+  public static final int TIMEOUT = 10000; // 상수 필드. public static final 생략 가능
+  public abstract void sendCall(); // 추상 메소드. public abstract 생략 가능
+  public abstract void receiveCall(); // 추상 메소드. public abstract 생략 가능
+  public default void printLogo() { // 디폴트 메소드는 public 생략 가능
+    System.out.println("** Phone **");
+  } //디폴트 메소드
+}
+```
+
+### 인터페이스 구성 요소들의 특징
+
+  상수: public만 허용, public static final 생략
+  추상 메소드: public abstract 생략 가능
+  default 메소드:
+  인터페이스에 코드가 작성된 메소드
+  인터페이스를 구현하는 클래스에 자동 상속
+  public 접근 지정만 허용. 생략 가능
+  private 메소드:
+  인터페이스 내에 메소드 코드가 작성되어야 함
+  인터페이스 내에 있는 다른 메소드에 의해서만 호출 가능
+  static 메소드: public, private 모두 지정 가능. 생략하면 public
+
+### 자바 인터페이스 특징
+  인터페이스의 객체 생성 불가
+
+
+```java
+new PhoneInterface(); // 오류. 인터페이스 PhoneInterface 객체 생성 불가
+```
+
+인터페이스 타입의 레퍼런스 변수 선언 가능
+```java
+PhoneInterface galaxy; //galaxy는 인터페이스에 대한 레퍼런스 변수
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 4월 18일 (9주차)
+## 클래스와 객체
+static 메소드의 제약 조건 2
+
+  static 메소드에서는 this 사용 불가
+  static 메소드는 객체 없이도 사용 가능하므로, this 레퍼런스 사용할 수 없음
+  
+final 클래스와 메소드
+
+final 클래스 - 더 이상 클래스 상속 불가능
+
+```java
+final class FinalClass{
+  ....
+}
+class SubClass extends FinalClass{ // 컴파일 오류 발생
+  .....
+}
+```
+final 메소드 - 더 이상 오버라이딩 불가능
+```java
+public class SuperClass{
+  protected final int finalMethod(){...}
+}
+class SubClass extends Superclass{ // SubClass가 SuperClass를 상속받음
+  protected in finalMethod(){...} // 컴파일 오류. finalMethod() 오버라이딩 할 수 없음
+}
+```
+final 필드
+
+  final 필드: 상수를 선언할 때 사용
+  상수 필드는 선언 시에 초기 값을 지정하여야 한다
+  상수 필드는 실행중에 값을 변경할 수 없다
+
+## 상속(inheritance)
+상속(inheritance)의 필요성
+
+클래스 사이의 멤버 중복 선언 불필요 - 클래스의 간결화
+클래스들의 계층적 분류로 클래스 관리 용이
+클래스 재사용과 확장을 통한 소프트웨어의 생산성 향상
+클래스 상속과 객체
+
+상속 선언: extends 키워드 사용
+부모 클래스를 돌려받아 자식 클래스를 확장한다는 의미
+부모 클래스 -> 슈퍼 클래스(super class)
+자식 클래스 -> 서브 클래스(sub class)
+
+```java
+class Point{
+  int x, y;
+}
+class ColorPoint extends Point{ //Point를 상속받는 ColorPoint 클래스 선언
+
+}
+```
+ColorPoint는 Point를 물려 받으므로, Point에 선언된 필드나 메소드를 재 선언할 필요가 없음
+  
+  클래스 상속 - Point와 ColorPoint 클래스
+
+(x,y)의 한 점을 표현하는 Point 클래스와 이를 상속받아 점에 색을 추가한 ColorPoint 클래스
+
+```java
+class Point {
+    private int x, y; // 한 점을 구성하는 x, y 좌표
+    public void set(int x, int y){
+        this.x = x; this.y = y;
+    }
+    public void showPoint(){ // 점의 좌표 출력
+        System.out.println("(" + x + "," + y + ")");
+    }
+}
+
+class ColorPoint extends Point{ //Point를 상속받은 ColorPoint 선언
+    private String color; // 점의 색
+    public void setColor(String color){
+        this.color = color;
+    }
+    public void showColorPoint(){ // 컬러 점의 좌표 출력
+        System.out.print(color);
+        showPoint(); // Point 클래스의 set() 호출
+    }
+}
+
+public class ex5_1{
+    public static void main(String[] args) {
+        Point p = new Point(); // Point 객체  생성
+        p.set(1,2); // Point 클래스의 set() 호출
+        p.showPoint();
+
+        ColorPoint cp = new ColorPoint(); // ColorPoint 객체 생성
+        cp.set(3,4); // Point 클래스의 set() 호출
+        cp.setColor("red"); // ColorPoint 클래스의 setColor() 호출
+        cp.showColorPoint(); // 컬러와 좌표 출력
+    }
+}
+결과: (1,2)
+red(3,4)
+```
+### 서브 클래스 객체의 모양
+
+  슈퍼 클래스 객체와 서브 클래스의 객체는 별개
+  서브 클래스 객체는 슈퍼 클래스 멤버 포함
+
+### 자바 상속의 특징
+
+  클래스 다중 상속(multiple inheritance) 불허
+  하나의 클래스가 둘 이상의 부모 클래스를 동시에 상속받는 것을 말한다
+
+  C++는 다중 상속 가능
+  C++는 다중 상속으로 멤버가 중복 생성되는 문제 있음(다이아몬드 상속)
+  부모 클래스 간에 계층적 관계가 있을 경우, 중복된 멤버가 생성될 수 있음 모호성(Ambiguity)문제: 두 부모 클래스에 동일한 이름의 멤버(변수나 함수)가 존재할 경우, 어떤 부모의 멤버를 호출해  야 할 지 모호해짐
+
+### 자바는 인터페이스(interface)의 다중 상속 허용
+다중 상속과 유사한 기능을 제공
+
+모든 자바 클래스는 묵시적으로 Object클래스 상속받음
+java.lang.Object는 클래스는 모든 클래스의 슈퍼 클래스
+슈퍼 클래스의 멤버에 대한 서브 클래스의 접근
+
+슈퍼 클래스의 private 멤버: 서브 클래스에서 접근 할 수 없음
+슈퍼 클래스의 디폴트 멤버: 서브 클래스가 동일한 패키지에 있을 때, 접근 가능
+슈퍼 클래스의 public 멤버: 서브 클래스는 항상 접근 가능
+슈퍼 클래스의 protected 멤버:
+같은 패키지 내의 모든 클래스 접근 허용
+패키지 여부와 상관없이 서브 클래스는 접근 가능
+
+protected 멤버
+
+슈퍼 클래스의 protected 멤버에 대한 접근: 같은 패키지의 모든 클래스에게 허용
+상속되는 서브 클래스가 같은 패키지든 다른 패키지든 상관 없이 허용
+서브 클래스/슈퍼 클래스의 생성자 호출과 실행
+
+서브 클래스의 객체가 생성될 때: 슈퍼클래스 생성자와 서브 클래스 생성자 모두 실행
+호출 순서: 서브 클래스의 생성자 먼저 호출 -> 슈퍼 클래스 생성자 호출
+실행 순서: 슈퍼 클래스의 생성자가 먼저 실행 -> 서브 클래스의 생성자 실행
+서브 클래스에서 슈퍼 클래스 생성자 선택
+
+슈퍼 클래스와 서브 클래스: 각각 여러 개의 생성자 작성 가능
+서브 클래스의 객체가 생성될 때: 슈퍼 클래스 생성자 1개와 서브 클래스 생성자 1개가 실행
+서브 클래스의 생성자와 슈퍼 클래스의 생성자가 결정되는 방식
+개발자의 병시적 선택
+서브 클래스 개발자가 슈퍼 클래스의 생성자 명시적 선택
+super() 키워드를 이용하여 선택
+컴파일러가 기본 생성자 선택
+서브 클래스 개발자가 슈퍼 클래스의 생성자를 선택하지 않는 경우
+컴파일러가 자동으로 슈퍼 클래스의 개본 생성자 선택
+컴파일러에 의해 슈퍼 클래스의 기본 생성자가 묵시적 선택
+
+개발자가 서브 클래스의 생성자에 대해 슈퍼 클래스의 생성자를 명시적으로 선택하지 않은 경우
+서브 클래스의 매개 변수를 가진 생성자에 대해서도 슈퍼 클래스의 기본 생성자가 자동 선택
+
+개발자가 서브 클래스의 생성자에 대해 슈퍼 클래스의 생성자를 명시적으로 선택하지 않은 경우
+super()로 슈퍼 클래스의 생성자 명시적 선택
+
+super(): 서브 클래스에서 명시적으로 슈퍼 클래스의 생성자 선택 호출
+사용방식
+super(parameter);
+인자를 이용하여 슈퍼 클래스의 적당한 생성자 호출
+반드시 서브 클래스 생성자 코드의 제일 첫 라인에 와야 함
+super()를 활용한 ColorPoint 작성
+
+```java
+class Point{
+    private int x, y; //한 점을 구성하는 x, y 좌표
+    public Point(){
+        this.x = this.y = 0;
+    }
+    public Point(int x, int y){
+        this.x = x; this.y = y;
+    }
+    public void showPoint() {// 점의 좌표 출력
+        System.out.println("(" + x + "," + y + ")");
+    }
+}
+
+class ColorPoint extends Point{ // Point를 상속받은 ColorPoint 선언
+    private String color; // 점의 색
+    public ColorPoint(int x, int y, String color){
+        super(x, y); // Point의 생성자 Point(x, y) 호출
+        this.color = color;
+    }
+    public void showColorPoint() { // 컬러 점의 좌표 출력
+        System.out.print(color);
+        showPoint(); // Point 클래스의 showPoint() 호출
+    }
+}
+
+public class ex5_2 {
+    public static void main(String[] args) {
+        ColorPoint cp = new ColorPoint(5, 6, "blue");
+        cp.showColorPoint();
+    }
+}
+결과: blue(5,6)
+```
+### 업캐스팅(upcasting) 개념
+
+하위 클래스의 레퍼런스는 상위 클래스를 가리킬 수 없지만, 상위 클래스의 레퍼런스는 하위 클래스를 가리킬수 있다
+생물이 들어가는 밖스에 사람이나 코끼리를 넣어도 무방
+사람이나 코끼리 모두 생물을 상속받았기 때문
+업캐스팅(upcasting)이란?
+서브 클래스의 레퍼런스를 슈퍼 클래스 레퍼런스에 대입
+슈퍼 클래스 레퍼런스로 서브 클래스 객체를 가리키게 되는 현상
+
+```java
+class Person{
+  String name;
+  String id
+
+  public Person(String name){
+    this.name = name;
+  }
+}
+class Student extends Person{
+  String grade;
+  String department;
+
+  public Student(String name){
+    super(name);
+  }
+}
+public claass UpcastingEx{
+  public static void main(String[] args){
+    Person p;
+    Student s = new Student("이재문");
+    p = s; //업캐스팅
+
+    system.out.println(p.name); // 오류 없음
+
+    p.grade = "A"; // 컴파일 오류
+    p.department = "Com"; // 컴파일 오류
+  }
+}
+```
+그렇다면 왜 p = s 로 업캐스팅을 한 걸까?
+
+  이 사례는 업캐스팅의 제한 사항을 설명하기 위한 코드
+  실제로는 이런 식으로 업새크싱을 사용하지 않음
+  실제로는 여러 자식 클래스를 하나의 부모 타입으로 다루기 위해 사용
+
+```java
+Person[] people = new Person[3];
+people[0] = new Student("홍길동");
+people[1] = new Student("김영희");
+people[2] = new Person("이순신");
+```
+이렇게 하면 공통된 타입(Person) 으로 여러 자식 클래스를 한 배열에 담을 수 있음
+대신 접근은 Person 수준에서만 가능
+다운캐스팅(downcasting)
+
+슈퍼 클래스 레퍼런스를 서브 클래스 레퍼런스에 대입
+업캐스팅 된 것을 다시 원래대로 되돌리는 것
+반드시 명시적 타입 변환 지점
+다운 캐스팅 사례
+
+```java
+public class DowncastingEX{
+  public static void main(String[] args){
+    Person p = new Student("이재문"); //업캐스팅 발생
+    Student s;
+
+    s = (Student)p; // 다운캐스팅
+
+    System.out.println(s.name); //오류 없음
+    s.grade = "A"; // 오류 없음
+  }
+}
+```
+
 
 ## 최종 클래스와 메소드
 
