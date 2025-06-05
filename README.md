@@ -1,4 +1,432 @@
 # 이도영 202230123
+## 6월 5일 (13주차)
+### 자바의 이벤트 처리
+독립 클래스로 Action 이벤트 리스너 만들기
+
+```java
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class ex9_1 extends JFrame{
+    public ex9_1() {
+        setTitle("Action 이벤트 리스너 예제");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        Container c = getContentPane();
+        c.setLayout(new FlowLayout());
+        JButton btn = new JButton("Action");
+        btn.addActionListener(new MyActionListener()); //Action 이벤트 리스너 달기
+        c.add(btn);
+
+        setSize(250,120);
+        setVisible(true);
+    }
+    public static void main(String [] args){
+        new ex9_1();
+    }
+}
+
+//독립된 클래스로 이벤트 리스너를 작성한다
+class MyActionListener implements ActionListener{
+    public void actionPerformed(ActionEvent e){
+        JButton b = (JButton)e.getSource(); // 이벤트 소스 버튼 알아내기
+        if(b.getText().equals("Action")) // 버튼의 문자일여 "Action"인지 비교
+            b.setText("액션"); // 버튼의 문자열을 "액션"으로 변경
+        else
+            b.setText("Action"); // 버튼의 문자열을 "Action"으로 변경
+    }
+}
+```
+
+내부 클래스로 Action 이벤트 리스너 만들기
+
+
+```java
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class ex9_2 extends JFrame{
+    public ex9_2() {
+        setTitle("Action 이벤트 리스너 예제");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        Container c = getContentPane();
+        c.setLayout(new FlowLayout());
+        JButton btn = new JButton("Action");
+        btn.addActionListener(new MyActionListener());
+        c.add(btn);
+
+        setSize(200,120);
+        setVisible(true);
+    }
+
+    //내부 클래스로 Action 리스너를 작성한다.
+    private class MyActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            JButton b = (JButton)e.getSource();
+            if(b.getText().equals("Action"))
+                b.setText("액션");
+            else
+                b.setText("Action");
+
+            ex9_2.this.setTitle(b.getText());
+        }
+    }
+    public static void main(String [] args) {
+        new ex9_2();
+    }
+}
+```
+
+익명 클래스로 이벤트 리스너 작성
+
+  익명 클래스(anonymous class) : 이름 없는 클래스
+  (클래스 선언 + 인스턴스 생성)을 한번에 달성
+  간단한 리스너의 경우 익명 클래스 사용 추천
+  메소드의 개수가 1, 2개인 리스너(ActionListener, ItemListener) 에 대해 주로 사용
+  마우스 이벤트 리스너 작성 연습 - 마우스로 문자열 이동시키기
+
+```java
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class ex9_4 extends JFrame{
+    private JLabel la = new JLabel("Hello"); // "Hello" 문자열을 출력하기 위한 레이블
+
+    public ex9_4() {
+        setTitle("Mouse 이벤트 예제");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Container c = getContentPane();
+        c.addMouseListener(new MyMouseListener()); // 컨텐트팸에 이벤트 리스너 달기
+
+        c.setLayout(null); // 컨텐트팬의 배치관리자 삭제
+        la.setSize(50,20); // 레이블의 크기 50x20 설정
+        la.setLocation(30, 30); // 레이블의 위치 (30, 30)으로 설정
+        c.add(la); // 레이블 삽입
+        
+        setSize(200, 200);
+        setVisible(true);
+    }
+
+    class MyMouseListener implements MouseListener {
+        public void mousePressed(MouseEvent e) {
+            int x = e.getX();
+            int y = e.getY();
+            la.setLocation(x, y);
+        }
+        public void mouseReleased(MouseEvent e) {}
+        public void mouseClicked(MouseEvent e) {}
+        public void mouseEntered(MouseEvent e) {}
+        public void mouseExited(MouseEvent e) {}
+    }
+
+    public static void main(String [] args) {
+        new ex9_4();
+    }
+}
+```
+
+어댑터 클래스
+
+  이벤트 리스너 구현에 따른 부담
+  리스너의 추상 메소드를 모두 구현해야 하는 부담
+  예) 마우스 리스너에서 마우스가 눌러지는 경우(mousePressed())만 처리하고자 하는 경우에도 나머지 4 개의 메소드를 모두 구현해야 하는 부담
+
+어댑터 클래스(Adapter)
+  리스너의 모든 메소드를 단순 리턴하도록 만든 클래스(JDK에서 제공)
+  추상 메소드가 하나뿐인 리스너는 어댑터 없음
+  ActionAdapter, ItemAdapter 클래스는 존재하지 않음
+
+Key 이벤트와 포커스
+
+  키 입력 시, 다음 세 경우 각각 Key 이벤트 발생
+
+  키를 누르는 순간
+  누른 키를 떼는 순간
+  누른 키를 떼는 순간(Unicode키의 경우에만)
+  키 이벤트를 받을 수 있는 조건
+
+모든 컴포넌트
+  현재 포커스(focus)를 가진 컴포넌트가 키 이벤트 독점
+
+포커스(focus)
+
+  컴포넌트나 응용프로그램이 키 이벤트를 독점하는 권한
+  컴포넌트에 포커스 설정 방법: 다음 2 라인 코드 필요
+
+KeyListener
+
+응용프로그램에서 KeyListener를 상속받아 키 리스너 구현
+유니코드(Unicode) 키
+
+  유니코드 키의 특징
+
+  국제 산업 표준
+  전 세계의 문자를 컴퓨터에서 일관되게 표현하기 위한 코드 체계
+  문자들에 대해서만 키 코드 값 정의: AZ, az, 0~9, !, @, & 등
+  문자가 아닌 키 경우에는 표준화된 키 코드 값 없음
+
+  Function 키, Home 키, UP 키, Delete 키, Control 키, Shift 키, Alt 키 등은 플랫폼에 따라 키 코드 값이 다를 수 있음
+  유니코드 키가 입력되는 경우
+
+  keyPressed(), keyTyped(), keyReleased() 가 순서대로 호출
+  유니코드 키가 아닌 경우
+  keyPressed(), keyReleased() 만 호출됨
+  가상 키와 입력된 키 판별
+
+KeyEvent 객체
+
+  입력된 키 정보를 가진 이벤트 객체
+  KeyEvent 객체의 메소드로 입력된 키 판별
+  KeyEvent 객체의 메소드로 입력된 키 판별
+
+  char KeyEvent.getKeyChar()
+  키의 유니코드 문자 값 리턴
+  Unicode 문자 키인 경우에만 의미 있음
+  입력된 키를 판별하기 위해 문자 값과 비교하면 됨
+
+### 스윙 컴포넌트 활용
+자바의 GUI 프로그래밍 방법
+
+컴포넌트 기반 GUI 프로그래밍
+
+스윙 컴포넌트를 이용하여 쉽게 GUI를 구축
+자바에서 제공하는 컴포넌트의 한계를 벗어나지 못함
+그래픽을 이용하여 GUI 구축
+
+그래픽 기반 GUI 프로그래밍
+개발자가 직접 그래픽으로 화면을 구성하는 부담
+독특한 GUI를 구성할 수 있는 장접
+GUI 처리의 실행 속도가 빨라, 게임 등에 주로 이용
+스윙 컴포넌트의 공통 메소드, JComponent의 메소드
+
+JComponent
+스윙 컴포넌트의 멤버를 모두 상속받는 슈퍼 클래스, 추상 클래스
+스윙 컴포넌트들이 상속받는 공통 메소드와 상수 구현
+
+
+
+
+
+
+
+
+
+
+## 5월 29일 (12주차)
+### 자바 GUI 스윙 기초
+#### 컨테이너와 컴포넌트
+
+컨테이너
+  다른 컴포넌트를 포함할 수 있는 GUI 컴포넌트 : java.awt.Container를 상속받음
+  다른 컨테이너에 포함될 수 있음
+  AWT 컨테이너 : Panel, Frame, Applet, Dialog, Window
+  Swing 컨테이너 : JPanel, JFrame, JApplet, JDialog, JWindow
+
+
+컴포넌트
+  컨테이너에 포함되어야 화면에 출력될 수 있는 GUI 객체
+  다른 컴포넌트를 포함할 수 없는 순수 컴포넌트
+  모든 GUI 컴포넌트가 상속받는 클래스 : java.awt.Component
+  스윙 컴포넌트가 상속받는 클래스 : Javax.swing.Jconponent
+  최상위 컨테이너
+
+  다른 컨테이너에 포함되지 않고도 화면에 출력되며, 독립적으로 존재 가능한 컨테이너
+  스스로 화면에 자신을 출력하는 컨테이너 : JFrame, JDialog, JApplet
+  컨테이너와 컴포넌트의 포함관계
+
+  최상위 컨테이너를 바닥에 깔고,
+  그 위에 컨테이너를 놓고,
+  다시 컴포넌트를 쌓아가는 방식,
+  즉 레고 블록을 쌓는 듯이 GUI 프로그램을 작성
+
+Swing GUI 프로그램 만들기
+  스윙 GUI 프로그램을 만드는 과정
+  스윙 프레임 만들기
+  main() 메소드 작성
+  스윙 프레임에 스윙 컴포넌트 붙이기
+  스윙 프로그램 작성에 필요한 import문
+
+```java
+import java.awt.*; // 그래픽 처리를 위한 클래스들의 경로명
+import java.awt.event.*; // AWT 이벤트 사용을 위한 경로명
+import java.swing.*; // 스윙 컴포넌트 클래스들의 경로명
+import java.swing.event.*; // 스윙 이벤트를 위한 경로명****
+```
+
+Swing 프레임
+  스윙 프레임: 모든 스윙 컴포넌트를 담는 최상위 컨테이너
+  JFrame을 상속받아 구현
+  컴포넌트들은 화면에 보이려면 스윙 프레임에 부착되어야 함
+  프레임을 닫으면 프레임에 부착된 모든 컴포넌트가 보이지 않게 됨
+
+스윙 프레임(JFrame)기본 구성
+  프레임: 스윙 프로그램의 기본 틀
+  메뉴바: 메뉴들이 부착되는 공간
+  컨텐트팬: GUI 컴포넌트들이 부착되는 공간
+  프레임 만들기, JFrame 클래스 상속
+
+스윙프레임
+  JFrame 클래스를 상속받은 클래스 작성
+  프레임의 크기를 반드시 지정: setSize() 호출
+  프레임을 화면에 출력하는 코드 반드시 필요: setVisible(true) 호출
+  300x300 크기의 스윙 프레임 만들기
+
+```java
+import javax.swing.*;
+
+public class ex8_1 extends JFrame {
+    public ex8_1() {
+        setTitle("300x300 스윙 프레임 만들기");
+        setSize(300, 300); // 프레임 크기 300x300
+        setVisible(true); // 프레임 출력
+    }
+
+    public static void main(String[] args) {
+        ex8_1 frame = new ex8_1();
+    }
+}
+```
+Swing 응용프로그램에서 main()의 기능과 위치
+
+  스윙 응용프로그램에서 main()의 기능 최소화 바람직
+  스윙 응용프로그램이 실행되는 시작점으로서의 기능만
+  스윙 프레임을 생성하는 정도의 코드로 최소화
+
+```java
+public static void main(String [] args) {
+  MyFrame frame = new MyFrame(); // 스윙 프레임 생성
+}
+```
+frame 객체를 생성하고 사용하지 않기 때문에 worrying이 발생
+실무에서는 다음과 같이 코딩하는 것이 일반적
+
+
+
+
+## 5월 15일 (11주차)
+
+### 모듈과 패키지 개념, 자바 패키지 활용
+
+###모듈 개념
+
+  Java 9에서 도입된 개념
+  패키지와 이미지 등의 리소스를 담은 컨테이너
+  모듈 파일(.mod)로 저장
+  자바 플랫폼의 모듈화
+
+자바 플랫폼
+
+  자바의 개발 환경(JDK)와 자바의 실행 환경(JRE)를 지칭. Java SE(자바 API) 포함
+  자바 API의 모든 클래스가 여러 개의 모듈로 재구성됨
+  모듈 파일은 JDK와 jmods 디렉터리에 저장하여 배포
+  모듈 파일로부터 모듈을 푸는 명령
+  jmod extract "C:\Program Files\Java\jdk-1.0.3+7\jmods\java.base.jmod"
+  현재 디렉터리에 java.base 모듈이 패키지와 클래스들로 풀림
+  테스트를 할 때는 temp 디렉토리를 만들어서 하는 것이 좋음
+  자바 모듈화의 목적
+
+  자바 컴포넌트들을 필오에 따라 조립하여 사용하기 위함
+  컴퓨터 시스템의 불필요한 부담 감소
+  세밀한 모듈화를 통해 필요 없는 모듈이 로드되지 않게 함
+  소형 IoT 장치에도 자바 응용프로그램이 실행되고 성능을 유지하게 함
+
+JDK의 주요 패키지
+
+  java.lang
+    스트링, 수학 함수, 입출력 등 자바 프로그래밍에 필요한 기본적인 클래스와 인터페이스
+    자동으로 import 됨- import 문 필요 없음
+  java.util
+    날짜, 시간, 벡터, 해시맵 등의 유틸리티 클래스와 인터페이스
+  java.io
+    키보드, 모니터, 프린터 등의 입출력 클래스와 인터페이스
+  java.awt
+    GUI 프로그래밍에 필요한 AWT 클래스와 인터페이스
+  javax.swing
+    스윙 GUI 프로그래밍에 필요한 클래스와 인터페이스
+  
+Object 클래스
+
+  모든 자바 클래스는 반드시 Object를 상속받도록 자동 컴파일
+  모든 클래스의 수퍼 클래스
+  모든 클래스가 상속받는 공통 메소드 포함
+  주요 메소드
+  boolean equals(Object obj)
+  Class getClass()
+  int hashCode
+  String toString()
+  void notify()
+  void notifyAll()
+  void wait()
+
+객체 속성
+
+  Object 클래스는 객체의 속성을 나타내는 메소드 제공
+  hashCode() 메소드
+  객체의 해시코드 값을 리턴하며, 객체마다 다름
+  getClass() 메소드
+  객체의 클래스 정보를 담은 Class 객체 리턴
+  Class 객체의 getName() 메소드는 객체의 클래스 이름 리턴
+  toString() 메소드
+  객체를 문자열로 리턴
+  
+  
+  Object 클래스로 겍체의 속성 알아내기
+```java
+class Point {
+    private int x, y;
+    public Point(int x, int y){
+        this.x = x; this.y = y;
+    }
+}
+
+public class ex6_1 {
+    public static void main(String[] args) {
+        Point p = new Point(2,3);
+        System.out.println(p.getClass().getName());
+        System.out.println(p.hashCode());
+        System.out.println(p.toString());
+    }
+}
+결과: Point
+804564176
+Point@2ff4acd0
+```
+toString() 메소드, 객체를 문자열로 변환
+
+각 클래스는 toString()을 오버라이딩하여 자신만의 문자열 리턴 가능
+  객체를 문자열로 반환
+  원형: public String toString();
+
+
+Point 클래스에 toString() 작성
+```java
+class Point {
+    private int x, y;
+    public Point(int x, int y){
+        this.x = x; this.y = y;
+    }
+    public String toString() {
+        return "Point(" + x + "," + y + ")";
+    }
+}
+
+public class ex6_2 {
+    public static void main(String[] args) {
+        Point a = new Point(2,3);
+        System.out.println(a.toString());
+        System.out.println(a); // a는 a.toString()으로 자동 변환됨
+    }
+}
+결과: Point(2, 3)
+Point(2, 3)
+```
+
+
+
 
 ## 5월 8일 (10주차)
 
@@ -165,16 +593,121 @@ new PhoneInterface(); // 오류. 인터페이스 PhoneInterface 객체 생성 �
 PhoneInterface galaxy; //galaxy는 인터페이스에 대한 레퍼런스 변수
 ```
 
+### 인터페이스 상속
+
+  인터페이스 간에 상속 가능:
+  인터페이스를 상속하여 확장된 인터페이스 작성 가능
+  extends 키워드로 상속 선언
+
+```java
+interface MobilePhoneInterface extends PhoneInterface {
+  void sendSMS(); // 추상 메소드 추가
+  void receiveSMS(); // 추상 메소드 추가
+}
+```
+
+### 인터페이스 구현
+
+  인터페이스의 추상 메소드를 모두 구현한 클래스 작성
+  implements 키워드 사용
+  여러 개의 인터페이스 동시 구현 가능
+  
+  인터페이스 구현 사례
+    PhoneInterface 인터페이스를 구현한 SamsungPhone 클래스
+```java
+class SamsungPhone inplemets PhoneInterface { // 인터페이스 구현
+  // PhoneInterface의 모든 메소드 구현
+  public void sendCall() {System.out.println("띠리리리링");}
+  public void receiveCall() {System.out.println("전화가 왔습니다.");}
+
+  // 메소드 추가 작성
+  public void flash() {System.out.println("전화기에 불이 켜젔습니다.");}
+}
+```
+### 모듈과 패키지 개념, 자바 패키지 활용
+패키지 개념과 필요성
+
+  3명이 분담하여 자바 응용프로그램을 개발하는 경우, 동일한 이름의 클래스가 존재할 가능성 있음
+  -> 합칠 때 오류 발생 가능성
+  -> 개발자가 서로 다른 디랙터리로 코드 관리하여 해결
+  자바의 패키지와 모듈이란?
+
+패키지(package)
+
+  서로 관련된 클래스와 인터페이스를 컴파일한 클래스 파일들을 묶어 놓은 디렉터리
+  하나의 응용프로그램은 한 개 이상의 패키지로 작성
+  패키지는 jar 파일로 압축할 수 있음
+  
+모듈(module)
+
+  여러 패키지와 이미지 등의 자원을 모아 놓은 컨테이너
+  하나의 모듈을 하나의 .jmod 파일에 저장
+  Java 9부터 모듈화 도입
+
+플랫폼의 모듈화: Java 9부터 자바 API의 모든 클래스들(자바 실행 환경)을 패키지 기반에서 모듈들로 완전히 재구성
+응용프로그램의 모듈화: 클래스들은 패키지로 만들고, 다시 패키지를 모듈로 만듦. 모듈 프로그래밍은 복잡
+자바 모듈화의 목적
+
+모듈화의 목적
+
+  Java 9부터 자바 API를 여러 모듈로 분할: Java 8까지는 rt.jar의 한 파일에 모든 API 저장 # 현재 70개로 정리됨
+  응용프로그램이 실행할 때 꼭 필요한 모듈들로만 실행 환경 구축: 메모리 자원이 열악한 작은 소형 기기에 꼭 필요한 모듈로 구성된 작은 크기의 실행 이미지를 만들기 위함
+  모듈의 현실
+
+  Java 9부터 전면적으로 도입
+
+  복잡한 개념
+
+  큰 자바 응용프로그램에는 개발, 유지보수 등에 적합
+
+  현실적으로 모듈로 나누어 자바 프로그램을 작성할 필요 없음
+
+  모듈화 작업은 매우 중요한 개념이며, 소규모 프로젝트부터 적용해야 대형 프로젝트 쉽게 도입, 활용 가능
+
+자바 API의 모듈 파일들
+
+  자바 JDK에 제공되는 모듈 파일들
+  자바가 설치된 jmods 디렉터리에 모듈 파일 존재: .jmod 확장자를 가진 파일. 모듈은 수 십개. 모듈 파일은 ZIP 포맷으로 압축된 파일 -> 포맷이 zip이며 확장자는 .jmod
+  모듈 파일에는 자바 API의 패키지와 클래스들이 들어 있음
+  java.base.jmod 파일을 풀어 놓은 사례
+
+  java.base.jmod 파일을 풀면, 모듈에 있는 패키지와 클래스를 볼 수 있다
+  패키지 사용하기, import문
+
+  다른 패키지에 작성된 클래스 사용
+  import를 이용하지 않는 겅우 -> 소스에 클래스 이름의 완전 경로명 사옹
 
 
+디폴트 패키지
 
+  package 선언문이 없는 자바 소스 파일의 경우
+  컴파일러는 클래스나 인터페이스를 디폴트 패키지에 소속시킴
+  디폴트 패키지 -> 현재 디렉터리
+  VS Code에서 Java Package 생성하기 1
 
+  Eclipse 보다도 간단히 만들 수 있음
+  일반적으로 package는 com.foo.test와 같이 도메인의 역순으로 만드는 것이 일반적
+  먼저 다음과 같은 디렉터리 구조 생성. 한 번에 com/foo/test로 입력해도 좋음
 
+  클래스 파일에 package com.foo.test
 
+  VS Code에서 Java Package 생성하기 2
 
+  Explorer 아래쪽의 "JAVA PROECTS"를 클릭하면 package의 계층 구조를 볼 수 있음
+  사용자 정의 package를 만든 후 사용하려면 import 키워드 사용
+  // 파일: src/com/example/utils/HelloUtill.java
+  // 파일: src/com/example/Main.java
+  어떤 클래스 파일에서 package선언을 생략하면 default package에 속함
+  같은 기본 패키지에 있는 다른 클래스에서는 import 없이 사용 가능 -> 5장까지 했던 방식
+  default package에 속해 있으면 다른 package를 사용할 수 없음
+  실제 프로젝트에서는 거의 모든 클래스가 명시적으로 package를 선언
 
+package의 운영 방법
 
-
+  패키지 이름은 도메인 기반으로 시작(일반 관례)형식: com.회사이름.프로젝트명.기능명 -> 충돌 방지(전 세계 어디서든 유일한 패키지명 확보 가능) / 모듈별 분리 가능
+  기능/역할별로 하위 패키지를 구분: utils, controllerm service 등
+  디렉토리 구조와 package 선언을 정확히 일치해야 함
+  import는 필요한 만큼만 * 전체 import는 피하는 것이 좋음
 
 
 
